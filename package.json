@@ -1,0 +1,11 @@
+{
+  "name": "Marionette.CompoundView",
+  "version": "0.0.5",
+  "dependencies": {
+    "coffee-script": "1.6.x",
+    "bower": "1.x"
+  },
+  "devDependencies": {
+    "uglify-js": "2.x"
+  }
+}
