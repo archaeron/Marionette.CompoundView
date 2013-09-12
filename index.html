@@ -1,0 +1,113 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Marionette.CompoundView</title>
+
+	<script src="assets/scripts/bower/jquery/jquery.js"></script>
+	<script src="assets/scripts/bower/underscore/underscore.js"></script>
+	<script src="assets/scripts/bower/backbone/backbone.js"></script>
+	<script src="assets/scripts/bower/backbone.marionette/lib/backbone.marionette.js"></script>
+	<script src="src/CompoundView.js"></script>
+
+
+	<link rel="stylesheet" type="text/css" href="assets/scripts/bower/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-12"><h1>Marionette.CompoundView</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12" id="compound-view-container">
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/handlebars" id="compound-view">
+		<div class="row">
+			<div class="col-lg-4 list-view-container">
+			</div>
+			<div class="col-lg-8 single-element-container">
+			</div>
+		</div>
+	</script>
+
+	<script type="text/handlebars" id="list-view">
+		<ul class="list list-group">
+		</ul>
+	</script>
+
+	<script type="text/handlebars" id="list-item-view">
+		<%= name %>
+	</script>
+
+	<script type="text/handlebars" id="item-view">
+		<div class="panel-heading"><%= name %></div>
+		<div class="panel-body">
+			Population: <%= population %>
+		</div>
+	</script>
+
+	<script>
+		MyApp = new Backbone.Marionette.Application();
+		MyApp.addRegions(
+			{
+				compoundViewContainer: "#compound-view-container"
+			}
+		);
+
+		var ListItemView = Backbone.Marionette.ItemView.extend(
+			{
+				tagName: 'li',
+				className: 'list-group-item',
+				template: '#list-item-view'
+			}
+		);
+
+		var ListCompositeView = Backbone.Marionette.CompositeView.extend(
+			{
+				itemView: ListItemView,
+				template: '#list-view',
+				itemViewContainer: ".list",
+			}
+		);
+
+		var ItemView = Backbone.Marionette.ItemView.extend(
+			{
+				template: '#item-view',
+				className: 'panel panel-default'
+			}
+		);
+
+		var Model = Backbone.Model.extend();
+		var Collection = Backbone.Collection.extend(
+			{
+				model: Model
+			}
+		);
+
+		var collection = new Collection([{name: 'Australia', population: 22.68e6}, {name: 'Switzerland', population: 7.997e6}]);
+
+		var cV = new Marionette.CompoundView(
+			{
+				listView: ListCompositeView,
+				itemView: ItemView,
+				collection: collection,
+				template: '#compound-view',
+				breakWidth: 756
+			}
+		);
+
+
+		cV.render();
+
+		console.log(cV);
+
+
+
+		MyApp.compoundViewContainer.show(cV);
+	</script>
+</body>
+</html>
