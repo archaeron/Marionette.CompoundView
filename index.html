@@ -15,21 +15,20 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<div class="col-12"><h1>Marionette.CompoundView</h1>
+			<div class="col-lg-12">
+				<h1>Marionette.CompoundView</h1>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-lg-12" id="compound-view-container">
+		<div id="compound-view-container">
 
-			</div>
 		</div>
 	</div>
 
 	<script type="text/handlebars" id="compound-view">
 		<div class="row">
-			<div class="col-lg-4 list-view-container">
+			<div class="col-sm-4 list-view-container">
 			</div>
-			<div class="col-lg-8 single-element-container">
+			<div class="col-sm-8 single-element-container">
 			</div>
 		</div>
 	</script>
@@ -46,11 +45,25 @@
 	<script type="text/handlebars" id="item-view">
 		<div class="panel-heading"><%= name %></div>
 		<div class="panel-body">
-			Population: <%= population %>
+			Population: <%= showNumber(population) %>
+			Land Area: <%= showNumber(landArea) %>
 		</div>
 	</script>
 
 	<script>
+		var showNumber = function(nStr)
+		{
+			nStr += '';
+			x = nStr.split('.');
+			x1 = x[0];
+			x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while (rgx.test(x1)) {
+				x1 = x1.replace(rgx, '$1' + "'" + '$2');
+			}
+			return x1 + x2;
+		};
+
 		MyApp = new Backbone.Marionette.Application();
 		MyApp.addRegions(
 			{
@@ -84,11 +97,23 @@
 		var Model = Backbone.Model.extend();
 		var Collection = Backbone.Collection.extend(
 			{
-				model: Model
+				model: Model,
+				comparator: function(model)
+				{
+					return model.get('name');
+				}
 			}
 		);
 
-		var collection = new Collection([{name: 'Australia', population: 22.68e6}, {name: 'Switzerland', population: 7.997e6}]);
+		var collection = new Collection(
+			[
+				{name: 'Australia', population: 22.68e6, landArea: 7.618e6},
+				{name: 'Switzerland', population: 7.997e6, landArea: 39997},
+				{name: 'Italy', population: 60.92e6, landArea: 294140},
+				{name: 'Argentina', population: 41.09e6, landArea: 2.737e6},
+				{name: 'South Korea', population: 48.8e6, landArea: 98190}
+			]
+		);
 
 		var cV = new Marionette.CompoundView(
 			{
@@ -96,7 +121,7 @@
 				itemView: ItemView,
 				collection: collection,
 				template: '#compound-view',
-				breakWidth: 756
+				breakWidth: 750
 			}
 		);
 
