@@ -7,7 +7,8 @@ class Marionette.CompoundView extends Marionette.Layout
 
 	constructor: (options) ->
 		super(options)
-		@listenTo this, 'list-element:selected', @renderSingleElement
+		@listenTo this, 'list-element:selected', (view) ->
+			@renderSingleElement view.model
 
 		# if options.breakWidth
 		# 	mq = window.matchMedia "(min-width: #{options.breakWidth}px)"
@@ -44,12 +45,11 @@ class Marionette.CompoundView extends Marionette.Layout
 
 		@listViewContainer.show(@listView)
 
-	renderSingleElement: (view) ->
-		console.log view
+	renderSingleElement: (model) ->
 		DetailView = @getDetailView()
 
 		detailView = new DetailView
-			model: view.model
+			model: model
 
 		@singleElementViewContainer.show detailView
 
