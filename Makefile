@@ -1,0 +1,2 @@
+test:
+	casperjs test tests/*
