@@ -15,11 +15,52 @@
 
     function CompoundView(options) {
       CompoundView.__super__.constructor.call(this, options);
-      this.listenTo(this, 'list-element:selected', this.renderSingleElement);
+      this.listenTo(this, 'list-element:selected', function(view) {
+        return this.renderSingleElement(view.model);
+      });
+      if (options.breakWidth && this.hasHistorySupport()) {
+        this.mq = window.matchMedia("(max-width: " + options.breakWidth + "px)");
+      }
     }
 
-    CompoundView.prototype.getListView = function() {
-      return Marionette.getOption(this, "listView");
+    CompoundView.prototype.shouldBreak = function() {
+      if (this.mq != null) {
+        return this.mq.matches;
+      } else {
+        return false;
+      }
+    };
+
+    CompoundView.prototype.hasHistorySupport = function() {
+      return typeof history !== "undefined" && history !== null;
+    };
+
+    CompoundView.prototype.getListView = function(collection) {
+      var CollectionView, ListView, listItemView, _ref;
+      ListView = Marionette.getOption(this, "listView");
+      if (ListView != null) {
+        return new ListView({
+          collection: collection
+        });
+      } else {
+        listItemView = Marionette.getOption(this, "listItemView");
+        CollectionView = (function(_super1) {
+          __extends(_Class, _super1);
+
+          function _Class() {
+            _ref = _Class.__super__.constructor.apply(this, arguments);
+            return _ref;
+          }
+
+          _Class.prototype.itemView = listItemView;
+
+          return _Class;
+
+        })(Marionette.CollectionView);
+        return new CollectionView({
+          collection: collection
+        });
+      }
     };
 
     CompoundView.prototype.getCollection = function() {
@@ -40,26 +81,24 @@
           return that.trigger('list-element:selected', this);
         }
       };
-      return this.listView.children.each(function(view) {
+      this.listView.children.each(function(view) {
         return view.delegateEvents(events);
       });
+      if (!this.shouldBreak()) {
+        return this.renderSingleElement(this.getCollection().first());
+      }
     };
 
     CompoundView.prototype.renderList = function() {
-      var ListView;
-      ListView = this.getListView();
-      this.listView = new ListView({
-        collection: this.getCollection()
-      });
+      this.listView = this.getListView(this.getCollection());
       return this.listViewContainer.show(this.listView);
     };
 
-    CompoundView.prototype.renderSingleElement = function(view) {
+    CompoundView.prototype.renderSingleElement = function(model) {
       var DetailView, detailView;
-      console.log(view);
       DetailView = this.getDetailView();
       detailView = new DetailView({
-        model: view.model
+        model: model
       });
       return this.singleElementViewContainer.show(detailView);
     };

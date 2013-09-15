@@ -10,13 +10,32 @@ class Marionette.CompoundView extends Marionette.Layout
 		@listenTo this, 'list-element:selected', (view) ->
 			@renderSingleElement view.model
 
-		# if options.breakWidth
-		# 	mq = window.matchMedia "(min-width: #{options.breakWidth}px)"
+		if options.breakWidth and @hasHistorySupport()
+			@mq = window.matchMedia "(max-width: #{options.breakWidth}px)"
 
-		# 	console.log mq
+	shouldBreak: ->
+		if @mq?
+			@mq.matches
+		else
+			false
 
-	getListView: ->
-		Marionette.getOption(this, "listView")
+	hasHistorySupport: ->
+		history?
+
+	getListView: (collection) ->
+		ListView = Marionette.getOption(this, "listView")
+		if ListView?
+			new ListView
+				collection: collection
+		else
+			listItemView = Marionette.getOption(this, "listItemView")
+
+			CollectionView = class extends Marionette.CollectionView
+				itemView: listItemView
+
+			new CollectionView
+				collection: collection
+
 
 	getCollection: ->
 		Marionette.getOption(this, "collection")
@@ -37,11 +56,11 @@ class Marionette.CompoundView extends Marionette.Layout
 		@listView.children.each (view) ->
 			view.delegateEvents events
 
-	renderList: ->
-		ListView = @getListView()
+		if not @shouldBreak()
+			@renderSingleElement @getCollection().first()
 
-		@listView = new ListView
-			collection: @getCollection()
+	renderList: ->
+		@listView = @getListView @getCollection()
 
 		@listViewContainer.show(@listView)
 

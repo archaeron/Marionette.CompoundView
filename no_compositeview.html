@@ -33,12 +33,6 @@
 		</div>
 	</script>
 
-	<script type="text/handlebars" id="list-view">
-		Countries
-		<ul class="list list-group">
-		</ul>
-	</script>
-
 	<script type="text/handlebars" id="list-item-view">
 		<%= name %>
 	</script>
@@ -80,14 +74,6 @@
 			}
 		);
 
-		var ListCompositeView = Backbone.Marionette.CompositeView.extend(
-			{
-				itemView: ListItemView,
-				template: '#list-view',
-				itemViewContainer: ".list",
-			}
-		);
-
 		var ItemView = Backbone.Marionette.ItemView.extend(
 			{
 				template: '#item-view',
@@ -118,8 +104,8 @@
 
 		var cV = new Marionette.CompoundView(
 			{
-				listView: ListCompositeView,
 				itemView: ItemView,
+				listItemView: ListItemView,
 				collection: collection,
 				template: '#compound-view',
 				breakWidth: 750
