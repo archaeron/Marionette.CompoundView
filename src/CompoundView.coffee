@@ -1,3 +1,8 @@
+# options:
+# - listView
+# - itemView
+# - listItemView
+# - collection
 class Marionette.CompoundView extends Marionette.Layout
 	className: 'compound-view'
 
@@ -47,14 +52,10 @@ class Marionette.CompoundView extends Marionette.Layout
 		super()
 		@renderList()
 
-		that = this
-
-		events =
-			'click': () ->
-				that.trigger 'list-element:selected', @
-
-		@listView.children.each (view) ->
-			view.delegateEvents events
+		@listView.children.each (view) =>
+			view.delegateEvents
+				'click': =>
+					@trigger 'list-element:selected', view
 
 		if not @shouldBreak()
 			@renderSingleElement @getCollection().first()

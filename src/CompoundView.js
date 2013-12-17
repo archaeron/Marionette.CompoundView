@@ -72,17 +72,15 @@
     };
 
     CompoundView.prototype.render = function() {
-      var events, that;
+      var _this = this;
       CompoundView.__super__.render.call(this);
       this.renderList();
-      that = this;
-      events = {
-        'click': function() {
-          return that.trigger('list-element:selected', this);
-        }
-      };
       this.listView.children.each(function(view) {
-        return view.delegateEvents(events);
+        return view.delegateEvents({
+          'click': function() {
+            return _this.trigger('list-element:selected', view);
+          }
+        });
       });
       if (!this.shouldBreak()) {
         return this.renderSingleElement(this.getCollection().first());
