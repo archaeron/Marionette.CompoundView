@@ -74,8 +74,7 @@ class Marionette.CompoundView extends Marionette.Layout
 					view.trigger 'list-element:selected'
 					@trigger 'list-element:selected', view
 
-		if not @shouldBreak()
-			@renderSingleElement @getCollection().first()
+		@renderSingleElement @getCollection().first()
 
 	renderList: ->
 		@listView = @getListView @getCollection()

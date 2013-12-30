@@ -100,9 +100,7 @@
           }
         });
       });
-      if (!this.shouldBreak()) {
-        return this.renderSingleElement(this.getCollection().first());
-      }
+      return this.renderSingleElement(this.getCollection().first());
     };
 
     CompoundView.prototype.renderList = function() {
