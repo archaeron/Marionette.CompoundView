@@ -40,12 +40,24 @@
       singleElementViewContainer: '.single-element-container'
     };
 
+    CompoundView.viewSizes = {
+      small: 'small',
+      large: 'large'
+    };
+
     function CompoundView(options) {
+      var _this = this;
       CompoundView.__super__.constructor.call(this, options);
       this.listenTo(this, 'list-element:selected', function(view) {
         return this.renderSingleElement(view.model);
       });
-      this.smallScreenQuery = options.breakWidth && this.hasHistorySupport() ? MediaMatcher.matchesEventStream("(max-width: " + options.breakWidth + "px)") : Bacon.once(false);
+      this.smallScreenQuery = (options.breakWidth && this.hasHistorySupport() ? MediaMatcher.matchesEventStream("(max-width: " + options.breakWidth + "px)") : Bacon.once(false)).map(function(isSmall) {
+        if (isSmall) {
+          return Marionette.CompoundView.viewSizes.small;
+        } else {
+          return Marionette.CompoundView.viewSizes.large;
+        }
+      });
     }
 
     CompoundView.prototype.hasHistorySupport = function() {
@@ -91,16 +103,39 @@
     CompoundView.prototype.render = function() {
       var _this = this;
       CompoundView.__super__.render.call(this);
+      return this.smallScreenQuery.onValue(function(screenSize) {
+        return _this.renderRightSize(screenSize);
+      });
+    };
+
+    CompoundView.prototype.renderRightSize = function(screenSize) {
+      if (screenSize === Marionette.CompoundView.viewSizes.large) {
+        return this.renderLarge();
+      } else {
+        return this.renderSmall();
+      }
+    };
+
+    CompoundView.prototype.renderSmall = function() {};
+
+    CompoundView.prototype.renderLarge = function() {
+      var _this = this;
       this.renderList();
       this.listView.children.each(function(view) {
         return view.delegateEvents({
           'click': function() {
+            if (_this.selectedListItem != null) {
+              _this.selectedListItem.trigger('list-element:unselected');
+            }
+            _this.selectedListItem = view;
             view.trigger('list-element:selected');
             return _this.trigger('list-element:selected', view);
           }
         });
       });
-      return this.renderSingleElement(this.getCollection().first());
+      if (this.listView.children.length > 0) {
+        return this.listView.children.first().$el.click();
+      }
     };
 
     CompoundView.prototype.renderList = function() {

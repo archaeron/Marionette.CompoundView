@@ -30,15 +30,21 @@ class Marionette.CompoundView extends Marionette.Layout
 		listViewContainer: ".list-view-container"
 		singleElementViewContainer: '.single-element-container'
 
+	@viewSizes:
+		small: 'small'
+		large: 'large'
+
 	constructor: (options) ->
 		super(options)
 		@listenTo this, 'list-element:selected', (view) ->
 			@renderSingleElement view.model
 
-		@smallScreenQuery = if options.breakWidth and @hasHistorySupport()
-				MediaMatcher.matchesEventStream "(max-width: #{options.breakWidth}px)"
-			else
-				Bacon.once false
+		@smallScreenQuery = (
+				if options.breakWidth and @hasHistorySupport()
+					MediaMatcher.matchesEventStream "(max-width: #{options.breakWidth}px)"
+				else
+					Bacon.once false
+			).map (isSmall) => if isSmall then Marionette.CompoundView.viewSizes.small else Marionette.CompoundView.viewSizes.large
 
 	hasHistorySupport: ->
 		history?
@@ -66,15 +72,34 @@ class Marionette.CompoundView extends Marionette.Layout
 
 	render: ->
 		super()
+		@smallScreenQuery.onValue (screenSize) => @renderRightSize screenSize
+
+
+	renderRightSize: (screenSize) ->
+		if screenSize is Marionette.CompoundView.viewSizes.large
+			@renderLarge()
+		else
+			@renderSmall()
+
+
+
+	renderSmall: ->
+
+	renderLarge: ->
 		@renderList()
 
 		@listView.children.each (view) =>
 			view.delegateEvents
 				'click': =>
+					if @selectedListItem?
+						@selectedListItem.trigger 'list-element:unselected'
+
+					@selectedListItem = view
 					view.trigger 'list-element:selected'
 					@trigger 'list-element:selected', view
 
-		@renderSingleElement @getCollection().first()
+		if @listView.children.length > 0
+			@listView.children.first().$el.click()
 
 	renderList: ->
 		@listView = @getListView @getCollection()
