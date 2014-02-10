@@ -3,13 +3,12 @@
 	"version": "0.0.1",
 	"private": true,
 	"dependencies": {
-		"jquery": ">=2.0.3",
-		"underscore": ">=1.5",
-		"backbone": ">=1.0.0",
-		"backbone.marionette": ">=1.1",
-    	"bootstrap": ">=3.0",
-    	"bacon": "~0.6.22",
-    	"bacon.jquery": "~0.4.0"
+		"jquery": "~2.0.3",
+		"underscore": "~1.5.0",
+		"backbone": "~1.1.0",
+		"backbone.marionette": "~1.6.0",
+		"bootstrap": ">=3.0",
+		"bacon": "~0.7.0"
 	},
 	"ignore": [
 		"**/.*",

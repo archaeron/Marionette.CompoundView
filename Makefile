@@ -2,5 +2,6 @@ test:
 	casperjs test tests/*
 
 compile:
-	cat src/MatchMediaEventStream.coffee src/CompoundView.coffee > build/concatenated.coffee
-	coffee -c build/concatenated.coffee
+	cat src/MatchMediaEventStream.coffee src/CompoundView.coffee > build/CompoundView.coffee
+	coffee -mc build/CompoundView.coffee
+	coffee -mc example/example.coffee

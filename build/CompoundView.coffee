@@ -90,13 +90,7 @@ class Marionette.CompoundView extends Marionette.Layout
 
 		@listView.children.each (view) =>
 			view.delegateEvents
-				'click': =>
-					if @selectedListItem?
-						@selectedListItem.trigger 'list-element:unselected'
-
-					@selectedListItem = view
-					view.trigger 'list-element:selected'
-					@trigger 'list-element:selected', view
+				'click': @itemSelected view
 
 		if @listView.children.length > 0
 			@listView.children.first().$el.click()
@@ -113,6 +107,15 @@ class Marionette.CompoundView extends Marionette.Layout
 			model: model
 
 		@singleElementViewContainer.show detailView
+
+	itemSelected: (view) ->
+		=>
+			if @selectedListItem?
+				@selectedListItem.trigger 'list-element:unselected'
+
+			@selectedListItem = view
+			view.trigger 'list-element:selected'
+			@trigger 'list-element:selected', view
 
 
 #   // Configured the initial events that the composite view

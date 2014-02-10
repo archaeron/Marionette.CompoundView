@@ -2,14 +2,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Marionette.CompoundView</title>
-
-	<script src="assets/scripts/bower/jquery/jquery.js"></script>
-	<script src="assets/scripts/bower/underscore/underscore.js"></script>
-	<script src="assets/scripts/bower/backbone/backbone.js"></script>
-	<script src="assets/scripts/bower/backbone.marionette/lib/backbone.marionette.js"></script>
-	<script src="src/CompoundView.js"></script>
-
-
 	<link rel="stylesheet" type="text/css" href="assets/scripts/bower/bootstrap/dist/css/bootstrap.css">
 </head>
 <body>
@@ -51,89 +43,19 @@
 		</div>
 	</script>
 
-	<script>
-		var showNumber = function(nStr)
+	<style>
+		.selected
 		{
-			nStr += '';
-			x = nStr.split('.');
-			x1 = x[0];
-			x2 = x.length > 1 ? '.' + x[1] : '';
-			var rgx = /(\d+)(\d{3})/;
-			while (rgx.test(x1)) {
-				x1 = x1.replace(rgx, '$1' + "'" + '$2');
-			}
-			return x1 + x2;
-		};
+			background-color: #F5F5F5;;
+		}
+	</style>
 
-		MyApp = new Backbone.Marionette.Application();
-		MyApp.addRegions(
-			{
-				compoundViewContainer: "#compound-view-container"
-			}
-		);
-
-		var ListItemView = Backbone.Marionette.ItemView.extend(
-			{
-				tagName: 'li',
-				className: 'list-group-item',
-				template: '#list-item-view'
-			}
-		);
-
-		var ListCompositeView = Backbone.Marionette.CompositeView.extend(
-			{
-				itemView: ListItemView,
-				template: '#list-view',
-				itemViewContainer: ".list",
-			}
-		);
-
-		var ItemView = Backbone.Marionette.ItemView.extend(
-			{
-				template: '#item-view',
-				className: 'panel panel-default'
-			}
-		);
-
-		var Model = Backbone.Model.extend();
-		var Collection = Backbone.Collection.extend(
-			{
-				model: Model,
-				comparator: function(model)
-				{
-					return model.get('name');
-				}
-			}
-		);
-
-		var collection = new Collection(
-			[
-				{name: 'Australia', population: 22.68e6, landArea: 7.618e6},
-				{name: 'Switzerland', population: 7.997e6, landArea: 39997},
-				{name: 'Italy', population: 60.92e6, landArea: 294140},
-				{name: 'Argentina', population: 41.09e6, landArea: 2.737e6},
-				{name: 'South Korea', population: 48.8e6, landArea: 98190}
-			]
-		);
-
-		var cV = new Marionette.CompoundView(
-			{
-				listView: ListCompositeView,
-				itemView: ItemView,
-				collection: collection,
-				template: '#compound-view',
-				breakWidth: 750
-			}
-		);
-
-		console.log(cV);
-
-
-		$(document).ready(function()
-			{
-				MyApp.compoundViewContainer.show(cV);
-			}
-		);
-	</script>
+	<script src="assets/scripts/bower/jquery/jquery.js"></script>
+	<script src="assets/scripts/bower/underscore/underscore.js"></script>
+	<script src="assets/scripts/bower/backbone/backbone.js"></script>
+	<script src="assets/scripts/bower/backbone.marionette/lib/backbone.marionette.js"></script>
+	<script src="assets/scripts/bower/bacon/dist/Bacon.js"></script>
+	<script src="build/CompoundView.js"></script>
+	<script src="example/example.js"></script>
 </body>
 </html>
