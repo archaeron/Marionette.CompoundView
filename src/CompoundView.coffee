@@ -27,15 +27,15 @@ class Marionette.CompoundView extends Marionette.Layout
 			).map (isSmall) => if isSmall then Marionette.CompoundView.viewSizes.small else Marionette.CompoundView.viewSizes.large
 
 	hasHistorySupport: ->
-		history?
+		window.history?
 
 	getListView: (collection) ->
-		ListView = Marionette.getOption(this, "listView")
+		ListView = Marionette.getOption this, "listView"
 		if ListView?
 			new ListView
 				collection: collection
 		else
-			listItemView = Marionette.getOption(this, "listItemView")
+			listItemView = Marionette.getOption this, "listItemView"
 
 			CollectionView = class extends Marionette.CollectionView
 				itemView: listItemView
@@ -52,7 +52,8 @@ class Marionette.CompoundView extends Marionette.Layout
 
 	render: ->
 		super()
-		@smallScreenQuery.onValue (screenSize) => @renderRightSize screenSize
+		@smallScreenQuery.subscribe (screenSize) =>
+			@renderRightSize screenSize
 
 
 	renderRightSize: (screenSize) ->
