@@ -1,10 +1,10 @@
 matchMediaEventStream = (mediaQueryString) ->
-	Bacon.fromBinder (sink) ->
+	Rx.Observable.create (observer) ->
 		mediaQueryListener = (mediaQuery) ->
-			sink(mediaQuery)
+			observer.onNext mediaQuery
 
 		mediaQuery = window.matchMedia mediaQueryString
-		sink(mediaQuery)
+		observer.onNext mediaQuery
 		mediaQuery.addListener mediaQueryListener
 		->
 			mediaQuery.removeListener mediaQueryListener

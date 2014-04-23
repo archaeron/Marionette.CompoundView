@@ -23,7 +23,7 @@ class Marionette.CompoundView extends Marionette.Layout
 				if options.breakWidth and @hasHistorySupport()
 					MediaMatcher.matchesEventStream "(max-width: #{options.breakWidth}px)"
 				else
-					Bacon.once false
+					Rx.Observable.return false
 			).map (isSmall) => if isSmall then Marionette.CompoundView.viewSizes.small else Marionette.CompoundView.viewSizes.large
 
 	hasHistorySupport: ->
