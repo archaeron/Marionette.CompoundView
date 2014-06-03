@@ -3,6 +3,10 @@
 # - itemView
 # - listItemView
 # - collection
+createObservable = (element, event) ->
+	Rx.Observable.fromEventPattern ((h) -> element.on event, h), ((h) -> element.off event, h)
+
+
 class Marionette.CompoundView extends Marionette.Layout
 	className: 'compound-view'
 
@@ -19,12 +23,6 @@ class Marionette.CompoundView extends Marionette.Layout
 		@listenTo this, 'list-element:selected', (view) ->
 			@renderSingleElement view.model
 
-		@smallScreenQuery = (
-				if options.breakWidth and @hasHistorySupport()
-					MediaMatcher.matchesEventStream "(max-width: #{options.breakWidth}px)"
-				else
-					Rx.Observable.return false
-			).map (isSmall) => if isSmall then Marionette.CompoundView.viewSizes.small else Marionette.CompoundView.viewSizes.large
 
 	hasHistorySupport: ->
 		window.history?
@@ -43,7 +41,6 @@ class Marionette.CompoundView extends Marionette.Layout
 			new CollectionView
 				collection: collection
 
-
 	getCollection: ->
 		Marionette.getOption this, "collection"
 
@@ -52,8 +49,7 @@ class Marionette.CompoundView extends Marionette.Layout
 
 	render: ->
 		super()
-		@smallScreenQuery.subscribe (screenSize) =>
-			@renderRightSize screenSize
+		@renderLarge()
 
 
 	renderRightSize: (screenSize) ->
@@ -70,6 +66,11 @@ class Marionette.CompoundView extends Marionette.Layout
 		@renderList()
 
 		@listView.children.each (view) =>
+
+			if view.addedToCompoundView?
+				view.addedToCompoundView this
+
+
 			view.delegateEvents
 				'click': @itemSelected view
 
@@ -88,6 +89,17 @@ class Marionette.CompoundView extends Marionette.Layout
 			model: model
 
 		@singleElementViewContainer.show detailView
+
+	initialEvents: ->
+		@listenTo @getCollection(), "add", @itemAdded
+
+	itemAdded: (model) ->
+		console.log "Item added"
+		listItemView = @listView.children.findByModel model
+		console.log listItemView
+		listItemView.delegateEvents
+			'click': @itemSelected listItemView
+
 
 	itemSelected: (view) ->
 		=>

@@ -44,7 +44,7 @@ class Collection extends Backbone.Collection
 	comparator: (model) ->
 		model.get 'name'
 
-collection = new Collection [
+window.c = collection = new Collection [
 		{name: 'Australia', population: 22.68e6, landArea: 7.618e6}
 		{name: 'Switzerland', population: 7.997e6, landArea: 39997}
 		{name: 'Italy', population: 60.92e6, landArea: 294140}

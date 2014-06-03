@@ -113,7 +113,7 @@
 
   })(Backbone.Collection);
 
-  collection = new Collection([
+  window.c = collection = new Collection([
     {
       name: 'Australia',
       population: 22.68e6,
